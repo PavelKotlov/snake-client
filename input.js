@@ -1,3 +1,5 @@
+const inspect = require('util').inspect;
+
 let connection;
 
 const setupInput = function (conn) {
@@ -10,27 +12,43 @@ const setupInput = function (conn) {
   return stdin;
 };
 
-const handleUserInput = function (data) {
-  if (data === "\u0003") {
+const handleUserInput = (data) => {
+  exitGame(data)
+  snakeMovement(data);
+  sendMessage(data);
+};
+
+const exitGame = (key) => {
+  if (key === "\u0003") {
     console.log("Successfully disconnected from game server");
     process.exit();
-  } else {
-    if (data == "w") {
-      connection.write("Move: up");
-    } else if (data == "s") {
-      connection.write("Move: down");
-    } else if (data == "a") {
-      connection.write("Move: left");
-    } else if (data == "d") {
-      connection.write("Move: right");
-    }
+  } 
+};
 
+const snakeMovement = (key) => {
+  if (key == "w") {
+    connection.write("Move: up");
+  } else if (key == "s") {
+    connection.write("Move: down");
+  } else if (key == "a") {
+    connection.write("Move: left");
+  } else if (key == "d") {
+    connection.write("Move: right");
   }
+};
+
+const sendMessage = (key) => {
+  if (key === '\r') {
+    connection.write("Say: yum")
+  };
 };
 
 const input = {
   setupInput,
-  handleUserInput
+  handleUserInput,
+  exitGame,
+  snakeMovement,
+  sendMessage
 }
 
 module.exports = input.setupInput;
